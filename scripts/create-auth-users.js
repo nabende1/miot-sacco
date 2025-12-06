@@ -1,0 +1,64 @@
+// scripts/create-auth-users.js
+// Run with: node scripts/create-auth-users.js
+
+const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config();
+
+const { SUPABASE_URL, SUPABASE_SERVICE_ROLE } = process.env;
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
+  console.error('❌ Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE in .env');
+  process.exit(1);
+}
+
+// Your real user IDs
+const USERS = {
+  gm: '96af3781-749a-47fd-82eb-4090aed97267',
+  bm: 'fb03abf8-e1ec-41cb-a096-22a13e4dd853',
+  fac: 'e7400383-4a87-445f-943d-2ef3faa462f3'
+};
+
+async function createAuthUser(id, email, password) {
+  const response = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_SERVICE_ROLE,
+      'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      id,
+      email,
+      password,
+      email_confirm: true
+    })
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(`Failed to create ${email}: ${error.message || response.statusText}`);
+  }
+
+  const user = await response.json();
+  console.log(`✅ Created ${email} (ID: ${user.user.id})`);
+}
+
+async function main() {
+  console.log('🌱 Creating authenticated users with password: Test1234');
+
+  try {
+    await createAuthUser(USERS.gm, 'gm@miot.com', 'Test1234');
+    await createAuthUser(USERS.bm, 'bm@miot.com', 'Test1234');
+    await createAuthUser(USERS.fac, 'fac@miot.com', 'Test1234');
+
+    console.log('\n🎉 All users created! You can now log in with:');
+    console.log('- GM: gm@miot.com / Test1234');
+    console.log('- BM: bm@miot.com / Test1234');
+    console.log('- Facilitator: fac@miot.com / Test1234');
+  } catch (err) {
+    console.error('\n💥 Error:', err.message);
+    process.exit(1);
+  }
+}
+
+main();
