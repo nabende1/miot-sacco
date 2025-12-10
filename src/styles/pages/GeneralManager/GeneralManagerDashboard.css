@@ -1,0 +1,372 @@
+/* General Manager Dashboard Specific Styles */
+.general-manager-dashboard {
+    background: #f5f7fa;
+    min-height: 100vh;
+}
+
+/* GM Color Theme */
+.gm-theme .sidebar {
+    background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
+}
+
+.gm-theme .menu-item.active {
+    border-left-color: #60a5fa;
+}
+
+/* Stats Cards */
+.gm-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* Content Cards */
+.gm-content-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gm-content-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.gm-content-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.gm-content-card .card-header h3 {
+    margin: 0;
+    color: #1a237e;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Branch Stats */
+.branch-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 20px 0;
+    padding: 16px 0;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.branch-stats .stat {
+    text-align: center;
+}
+
+.branch-stats .stat strong {
+    display: block;
+    font-size: 24px;
+    color: #1a237e;
+    margin-bottom: 4px;
+}
+
+.branch-stats .stat small {
+    font-size: 12px;
+    color: #666;
+}
+
+/* Staff Breakdown */
+.staff-breakdown {
+    margin-top: 15px;
+}
+
+.role-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.role-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.role-dot.branch-manager {
+    background: #4caf50;
+}
+
+.role-dot.facilitator {
+    background: #ff9800;
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.quick-actions .btn {
+    flex: 1;
+    justify-content: center;
+}
+
+/* Loading States */
+.loading-fullscreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 16px;
+    background: #f5f7fa;
+}
+
+.loading-fullscreen .loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .gm-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .branch-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-actions {
+        flex-direction: column;
+    }
+}
+
+/* Add these to GeneralManagerDashboard.css */
+
+.top-branches-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.branch-performance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+}
+
+.branch-rank {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.rank-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    color: white;
+    border-radius: 50%;
+    font-weight: 600;
+}
+
+.branch-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.branch-info strong {
+    color: #1f2937;
+}
+
+.branch-info small {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.branch-metrics {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.branch-metrics .metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.branch-metrics .metric span {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+
+.branch-metrics .metric strong {
+    font-size: 1rem;
+    color: #1f2937;
+}
+
+.performance-score {
+    color: #10b981 !important;
+}
+
+.attention-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    color: #92400e;
+    font-size: 0.875rem;
+}
+
+.performance-metrics-section {
+    margin-top: 2rem;
+}
+
+.performance-metrics-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.metric-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.metric-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: #374151;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.metric-progress {
+    height: 0.5rem;
+    background: #f3f4f6;
+    border-radius: 9999px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    border-radius: 9999px;
+    transition: width 1s ease-in-out;
+}
+
+.progress-bar.success {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.progress-bar.warning {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.progress-bar.danger {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.metric-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.metric-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.metric-trend.positive {
+    color: #10b981;
+}
+
+.metric-trend.negative {
+    color: #ef4444;
+}
+
+.metric-footer small {
+    color: #6b7280;
+    font-size: 0.75rem;
+}
+
+.tab-content.full-width {
+    padding: 0;
+}
+
+/* Loading state improvements */
+.loading-fullscreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 1rem;
+}
+
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

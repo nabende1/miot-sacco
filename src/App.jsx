@@ -1,40 +1,41 @@
-// src/App.jsx
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { DataProvider } from './contexts/DataContext';
 import Login from './pages/Login';
-import SuperAdminDashboard from './pages/SuperAdminDashboard';
-import GMDashboard from './pages/GMDashboard';
-import BranchDashboard from './pages/BranchDashboard';
-import FacilitatorDashboard from './pages/FacilitatorDashboard';
-import LoanWorkflow from './pages/LoanWorkflow';
-import WeeklyEntry from './pages/WeeklyEntry';
-import Reports from './pages/Reports';
-import UserManagement from './pages/UserManagement';
 import ProtectedRoute from './routes/ProtectedRoute';
-import RoleRedirect from './components/RoleRedirect';
+
+// Assuming you have these dashboard components
+import FacilitatorDashboard from './pages/FacilitatorDashboard'; 
+// NOTE: Please ensure these imports match your file structure!
+import SuperAdminDashboard from './pages/SuperAdminDashboard'; 
+import GeneralManagerDashboard from './pages/GeneralManagerDashboard'; 
+import BranchManagerDashboard from './pages/BranchManagerDashboard'; 
+// import MemberDashboard from './pages/MemberDashboard'; 
+// import NotFound from './pages/NotFound'; // Optional: for 404 page
 
 export default function App() {
   return (
     <DataProvider>
       <div className="App">
         <Routes>
-          {/* Public route */}
+          {/* Public routes */}
           <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
 
-          {/* Protected routes */}
+          {/* Protected routes (Wrapped by ProtectedRoute) */}
           <Route element={<ProtectedRoute />}>
+            
+            {/* Define ALL role dashboards here */}
             <Route path="/super-admin" element={<SuperAdminDashboard />} />
-            <Route path="/gm-dashboard" element={<GMDashboard />} />
-            <Route path="/branch-dashboard" element={<BranchDashboard />} />
-            <Route path="/facilitator-dashboard" element={<FacilitatorDashboard />} />
-            <Route path="/loan-workflow" element={<LoanWorkflow />} />
-            <Route path="/weekly-entry" element={<WeeklyEntry />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/users" element={<UserManagement />} />
+            <Route path="/general-manager-dashboard" element={<GeneralManagerDashboard />} />
+            <Route path="/branch-dashboard" element={<BranchManagerDashboard />} />
+            <Route path="/facilitator-dashboard/*" element={<FacilitatorDashboard />} />
+          
+            
+            {/* Catch-all protected route: Redirects unauthorized paths back to login */}
+            {/* If you have a neutral dashboard, redirect there instead of /login */}
+            <Route path="*" element={<Navigate to="/login" replace />} /> 
+            
           </Route>
-
-          {/* Default redirect based on role */}
-          <Route path="/" element={<RoleRedirect />} />
         </Routes>
       </div>
     </DataProvider>

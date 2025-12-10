@@ -1,4 +1,4 @@
-// src/components/BranchManagement.jsx - SIMPLIFIED WORKING VERSION
+// src/components/BranchManagement.jsx - REFACTORED WITH RPC FIX
 import { useState, useEffect } from 'react';
 import { 
   Building2, 
@@ -19,7 +19,7 @@ import {
   Shield,
   Grid,
   List,
-  CheckCircle // Added missing import
+  CheckCircle
 } from 'lucide-react';
 import supabase from '../supabaseClient';
 
@@ -61,12 +61,12 @@ export default function BranchManagement() {
       // 1. Fetch branches with safe select
       const { data: branchesData, error: branchesError } = await supabase
         .from('branches')
-        .select('id, name, region, created_at, updated_at')
+        .select('id, name, region, created_at, updated_at, branch_manager_id') // Added branch_manager_id for UI
         .order('created_at', { ascending: false });
 
       if (branchesError) {
         console.error('Branches fetch error:', branchesError);
-        // Try even simpler query
+        // Fallback or error handling remains the same
         const { data: simpleData } = await supabase
           .from('branches')
           .select('id, name')
@@ -110,7 +110,7 @@ export default function BranchManagement() {
     }
   };
 
-  // SIMPLIFIED: Add branch
+  // SIMPLIFIED: Add branch (Still uses standard INSERT as RLS policy is usually simple for trusted roles)
   const handleAddBranch = async (branchData) => {
     if (!isSuperAdmin) {
       setError('Only Super Admins can add branches');
@@ -123,13 +123,11 @@ export default function BranchManagement() {
       
       console.log('Adding branch:', branchData);
       
-      // Build safe data object
       const insertData = {
         name: branchData.name.trim(),
         region: branchData.region?.trim() || null,
       };
       
-      // Only add manager_id if we have it
       if (branchData.branch_manager_id) {
         insertData.branch_manager_id = branchData.branch_manager_id;
       }
@@ -141,7 +139,6 @@ export default function BranchManagement() {
 
       if (error) {
         console.error('Add branch error:', error);
-        // Try without manager_id
         if (error.message.includes('branch_manager_id')) {
           delete insertData.branch_manager_id;
           const { data: retryData, error: retryError } = await supabase
@@ -168,8 +165,9 @@ export default function BranchManagement() {
     }
   };
 
-  // SIMPLIFIED: Update branch
+  // 🛑 FIX: Use RPC for secure, role-based UPDATE
   const handleUpdateBranch = async (branchId, updates) => {
+    // The client-side check is left for UX, but RPC handles security
     if (!isSuperAdmin) {
       setError('Only Super Admins can update branches');
       return;
@@ -179,43 +177,19 @@ export default function BranchManagement() {
       setError('');
       setSuccess('');
       
-      console.log('Updating branch:', branchId, updates);
+      console.log('Updating branch via RPC:', branchId, updates);
       
-      // Build safe update object
-      const updateData = {
-        name: updates.name.trim(),
-        region: updates.region?.trim() || null,
-        updated_at: new Date().toISOString()
-      };
-      
-      // Only update manager_id if we have it
-      if (updates.branch_manager_id !== undefined) {
-        updateData.branch_manager_id = updates.branch_manager_id || null;
-      }
-      
-      const { error } = await supabase
-        .from('branches')
-        .update(updateData)
-        .eq('id', branchId);
+      // Calling the PostgreSQL function (RPC)
+      const { error } = await supabase.rpc('update_branch_with_role_check', {
+        // Argument names MUST match the PostgreSQL function signature
+        branch_id: branchId,
+        new_branch_name: updates.name.trim(),
+        new_region: updates.region?.trim() || null, 
+        new_manager_id: updates.branch_manager_id || null // Handles null/empty string for unassigning
+      });
 
       if (error) {
-        console.error('Update branch error:', error);
-        // Try without manager_id
-        if (error.message.includes('branch_manager_id')) {
-          delete updateData.branch_manager_id;
-          const { error: retryError } = await supabase
-            .from('branches')
-            .update(updateData)
-            .eq('id', branchId);
-            
-          if (retryError) throw retryError;
-          
-          setSuccess('Branch updated successfully!');
-          fetchAllData();
-          setShowEditModal(false);
-          setSelectedBranch(null);
-          return;
-        }
+        console.error('RPC Update branch error:', error);
         throw error;
       }
       
@@ -229,10 +203,11 @@ export default function BranchManagement() {
     }
   };
 
-  // SIMPLIFIED: Delete branch
+  // 🛑 FIX: Use RPC for secure, role-based DELETE
   const handleDeleteBranch = async () => {
     if (!selectedBranch) return;
     
+    // The client-side check is left for UX, but RPC handles security
     if (!isSuperAdmin) {
       setError('Only Super Admins can delete branches');
       return;
@@ -242,26 +217,40 @@ export default function BranchManagement() {
       setError('');
       setSuccess('');
       
-      console.log('Deleting branch:', selectedBranch.id);
+      console.log('Deleting branch via RPC:', selectedBranch.id);
       
-      // First check if we should use soft delete (is_active) or hard delete
-      const { error } = await supabase
-        .from('branches')
-        .delete()
-        .eq('id', selectedBranch.id);
+      // Calling the PostgreSQL function (RPC)
+      const { error } = await supabase.rpc('delete_branch_with_role_check', {
+        // Argument name MUST match the PostgreSQL function signature
+        branch_id_to_delete: selectedBranch.id, 
+      });
 
       if (error) {
-        console.error('Delete error:', error);
-        // Try soft delete
+        console.error('RPC Delete error:', error);
+        
+        // This logic is complex and often unnecessary when using a trusted RPC.
+        // If the RPC fails, it should throw a clear error.
+        // We will keep the soft-delete fallback if the error message indicates a RLS failure or constraint issue
+        // that the RPC couldn't handle, although the RPC should handle the logic.
+        if (error.message.includes('Permission denied') || error.code === 'P0001') {
+           setError(`Permission Denied: Failed to delete branch. Check user role and database function logic.`);
+           throw error; 
+        }
+
+        // Keep the soft-delete fallback logic for robustness if the error suggests it
+        console.warn('Attempting soft delete fallback...');
         const { error: softDeleteError } = await supabase
           .from('branches')
           .update({ is_active: false, deleted_at: new Date().toISOString() })
           .eq('id', selectedBranch.id);
           
         if (softDeleteError) throw softDeleteError;
+        
+        setSuccess('Branch soft-deleted successfully!');
+      } else {
+        setSuccess('Branch hard-deleted successfully!');
       }
       
-      setSuccess('Branch deleted successfully!');
       fetchAllData();
       setShowDeleteModal(false);
       setSelectedBranch(null);
@@ -781,7 +770,8 @@ function EditBranchForm({ branch, onSubmit, onCancel, branchManagers }) {
     }
     
     setSubmitting(true);
-    await onSubmit(branch.id, formData);
+    // Pass the branch ID and the updated data to the handler
+    await onSubmit(branch.id, formData); 
     setSubmitting(false);
   };
 

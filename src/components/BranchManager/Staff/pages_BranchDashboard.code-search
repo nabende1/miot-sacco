@@ -1,0 +1,9 @@
+# Query: pages/BranchDashboard
+# ContextLines: 1
+
+1 result - 1 file
+
+src\App.jsx:
+  10  import GeneralManagerDashboard from './pages/GeneralManagerDashboard'; 
+  11: import BranchManagerDashboard from './pages/BranchManagerDashboard'; 
+  12  // import MemberDashboard from './pages/MemberDashboard'; 

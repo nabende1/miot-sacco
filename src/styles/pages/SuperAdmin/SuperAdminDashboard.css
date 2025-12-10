@@ -1,0 +1,67 @@
+/* This file only imports other styles - it's the entry point for Super Admin dashboard */
+@import '../../base/variables.css';
+@import '../../base/reset.css';
+@import '../../base/typography.css';
+
+@import '../../components/Layout/DashboardLayout.css';
+@import '../../components/Layout/Sidebar.css';
+@import '../../components/Layout/Header.css';
+@import '../../components/Layout/MainContent.css';
+
+@import '../../components/UI/Cards.css';
+@import '../../components/UI/Tables.css';
+@import '../../components/UI/Buttons.css';
+@import '../../components/UI/Forms.css';
+@import '../../components/UI/Modals.css';
+@import '../../components/UI/Badges.css';
+@import '../../components/UI/Loaders.css';
+
+@import '../../features/Dashboard/StatsCards.css';
+@import '../../features/Dashboard/ActivityFeed.css';
+@import '../../features/Dashboard/Charts.css';
+@import '../../features/Dashboard/QuickActions.css';
+
+@import '../../features/UserManagement/UserTable.css';
+@import '../../features/UserManagement/UserForm.css';
+@import '../../features/UserManagement/UserFilters.css';
+
+@import '../../features/BranchManagement/BranchCard.css';
+@import '../../features/BranchManagement/BranchTable.css';
+@import '../../features/BranchManagement/BranchForm.css';
+
+@import '../../features/LoanManagement/LoanCard.css';
+@import '../../features/LoanManagement/LoanTable.css';
+@import '../../features/LoanManagement/LoanForm.css';
+
+@import '../../layouts/SuperAdminLayout.css';
+
+/* Super Admin specific overrides and additions */
+.welcome-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.welcome-header h1 {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+/* Loading states specific to Super Admin */
+.super-admin-loading {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}

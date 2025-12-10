@@ -3781,3 +3781,95 @@
 .loading-spinner {
     animation: spin 1s linear infinite;
 }
+
+/* ======================================================= */
+/* BASE STYLES: MOBILE FIRST (Default for screens < 768px) */
+/* ======================================================= */
+
+.super-admin-dashboard {
+    display: flex; /* Establishes the primary layout container */
+    min-height: 100vh;
+}
+
+.sidebar {
+    /* Mobile: Sidebar is hidden off-screen (Drawer style) */
+    position: fixed; /* Must be fixed/absolute to cover content */
+    top: 0;
+    left: 0;
+    width: 280px; /* Full width when open on mobile */
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(-100%); /* Hides it off-screen */
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar.open {
+    /* Toggled class on mobile to show the sidebar */
+    transform: translateX(0);
+}
+
+.main-content {
+    flex-grow: 1;
+    width: 100%;
+    /* On mobile, main content is always full width */
+    padding: 20px;
+    padding-top: 60px; /* Space for the mobile header/hamburger menu */
+}
+
+/* New Mobile Header for Hamburger Menu */
+.mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-color: var(--color-primary, #4a90e2); /* Use your primary color */
+    color: white;
+    padding: 0 20px;
+    z-index: 999;
+}
+
+.mobile-header .hamburger {
+    cursor: pointer;
+}
+
+/* ======================================================= */
+/* DESKTOP/LARGE SCREEN STYLES (Applies for screens >= 768px) */
+/* ======================================================= */
+
+@media (min-width: 768px) {
+    /* Hide Mobile Header */
+    .mobile-header {
+        display: none;
+    }
+
+    .sidebar {
+        /* Desktop: Fixed position, part of the layout */
+        position: fixed; /* Fixed position, does not scroll */
+        transform: translateX(0); /* Always visible */
+        width: 250px; /* Default expanded width */
+        transition: width 0.3s ease-in-out;
+        /* Ensure the sidebar has a defined background and shadow */
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05); 
+    }
+
+    .sidebar.collapsed {
+        width: 80px; /* Collapsed width */
+    }
+
+    .main-content {
+        /* Pushes content away from the fixed sidebar */
+        margin-left: 250px;
+        padding-top: 20px; /* Reset top padding */
+        transition: margin-left 0.3s ease-in-out;
+    }
+
+    .sidebar.collapsed ~ .main-content {
+        /* Adjust margin when sidebar is collapsed */
+        margin-left: 80px;
+    }
+}
